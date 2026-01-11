@@ -31,11 +31,17 @@ func UpdateMatchmakeSessionAttribute(err error, packet nex.PacketInterface, call
 		return nil, nex.NewError(nex.ResultCodes.RendezVous.PermissionDenied, "change_error")
 	}
 
+	// Hopefully this works and doesn't break any legitimate requests
+	if len(attribs) > len(session.Attributes) {
+		globals.MatchmakingManager.Mutex.Unlock()
+		return nil, nex.NewError(nex.ResultCodes.Core.InvalidArgument, "change_error")
+	}
+
 	for i, attrib := range attribs {
 		nexError := matchmake_extension_database.UpdateGameAttribute(globals.MatchmakingManager, uint32(gid), uint32(i), uint32(attrib))
 		if nexError != nil {
 			globals.Logger.Error(nexError.Error())
-			globals.MatchmakingManager.Mutex.RUnlock()
+			globals.MatchmakingManager.Mutex.Unlock()
 			return nil, nexError
 		}
 	}
