@@ -1,6 +1,8 @@
 package local_matchmake_extension
 
 import (
+	"math"
+
 	"github.com/PretendoNetwork/monster-hunter-xx/globals"
 	"github.com/PretendoNetwork/nex-go/v2"
 	"github.com/PretendoNetwork/nex-go/v2/types"
@@ -23,6 +25,11 @@ func BrowseMatchmakeSessionNoHolderNoResultRange(err error, packet nex.PacketInt
 
 	searchCriterias := []match_making_types.MatchmakeSessionSearchCriteria{searchCriteria}
 
+	if searchCriteria.ResultRange.Offset == math.MaxUint32 {
+		searchCriteria.ResultRange.Offset = 0
+	}
+
+	// Just a default in-case the search criteria doesn't have one set
 	resultRange := types.NewResultRange()
 	resultRange.Length = 50
 
