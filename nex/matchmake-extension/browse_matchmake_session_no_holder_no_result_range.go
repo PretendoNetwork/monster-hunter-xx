@@ -21,17 +21,17 @@ func BrowseMatchmakeSessionNoHolderNoResultRange(err error, packet nex.PacketInt
 	connection := packet.Sender().(*nex.PRUDPConnection)
 	endpoint := connection.Endpoint().(*nex.PRUDPEndPoint)
 
-	globals.MatchmakingManager.Mutex.RLock()
-
-	searchCriterias := []match_making_types.MatchmakeSessionSearchCriteria{searchCriteria}
-
 	if searchCriteria.ResultRange.Offset == math.MaxUint32 {
 		searchCriteria.ResultRange.Offset = 0
 	}
 
+	searchCriterias := []match_making_types.MatchmakeSessionSearchCriteria{searchCriteria}
+
 	// Just a default in-case the search criteria doesn't have one set
 	resultRange := types.NewResultRange()
 	resultRange.Length = 50
+
+	globals.MatchmakingManager.Mutex.RLock()
 
 	sessions, nexError := database.FindMatchmakeSessionBySearchCriteria(globals.MatchmakingManager, connection, searchCriterias, resultRange, nil)
 	if nexError != nil {
