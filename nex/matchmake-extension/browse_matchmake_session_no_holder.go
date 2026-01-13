@@ -1,13 +1,13 @@
 package local_matchmake_extension
 
 import (
+	"github.com/PretendoNetwork/monster-hunter-xx/globals"
 	"github.com/PretendoNetwork/nex-go/v2"
 	"github.com/PretendoNetwork/nex-go/v2/types"
 	common_globals "github.com/PretendoNetwork/nex-protocols-common-go/v2/globals"
 	"github.com/PretendoNetwork/nex-protocols-common-go/v2/matchmake-extension/database"
 	match_making_types "github.com/PretendoNetwork/nex-protocols-go/v2/match-making/types"
 	matchmake_extension "github.com/PretendoNetwork/nex-protocols-go/v2/matchmake-extension"
-	"github.com/PretendoNetwork/monster-hunter-xx/globals"
 )
 
 func BrowseMatchmakeSessionNoHolder(err error, packet nex.PacketInterface, callID uint32, searchCriteria match_making_types.MatchmakeSessionSearchCriteria, resultRange types.ResultRange) (*nex.RMCMessage, *nex.Error) {
@@ -29,12 +29,10 @@ func BrowseMatchmakeSessionNoHolder(err error, packet nex.PacketInterface, callI
 		return nil, nexError
 	}
 
-	for _, session := range sessions {
+	for i := range sessions {
 		// * Scrap session key and user password
-		session.SessionKey = make([]byte, 0)
-		session.UserPassword = ""
-
-		globals.Logger.Info(session.String())
+		sessions[i].SessionKey = make([]byte, 0)
+		sessions[i].UserPassword = ""
 	}
 
 	globals.MatchmakingManager.Mutex.RUnlock()
